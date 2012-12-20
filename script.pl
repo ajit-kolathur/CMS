@@ -1,3 +1,5 @@
+#!/usr/bin/perl
+
 # Vishwajit Kolathur
 # CMS - Sync V 0.1
 # 23:30 19/12/12
@@ -63,4 +65,6 @@ else {
 	    die "No course list, please fill in the course list\nin your /home/Academics directory under the name courses.txt\n";
 
 }
+#end courses check
+
 
