@@ -11,9 +11,13 @@ $ua->timeout(0.5); # timeout interval
 #  on the IP 172.16.100.125 else it will check for the connectivity 
 #  to the Public IP 111.93.5.216 
 
-#begin IP Check Code
 my $local_address = "http://172.16.100.125/";
 my $remote_address = "http://111.93.5.216/";
+my $name = "Academics"; #Folder name under which to store
+my $permissions = '0755'; #folder permissions
+my $folder = File::HomeDir->my_home . "/$name";
+
+#begin IP Check Code
 if(head($local_address)){
 	print "Using the intranet site\n";
 }
@@ -36,14 +40,22 @@ else {
 #  and die asking user to fill it in
 
 #begin courses check
-$name = "Academics";
-$permissions = '0777';
-$folder = File::HomeDir->my_home . "/Academics";
 chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir "Academics");
 my $fileSpec ="courses.txt";
 if ( -e $fileSpec ) {
     print "Reading from the file\n";
-
+	open FILE, 'courses.txt';
+	my @courses;
+	for (my $i = 0 ; $i < 8 ; $i++) {
+		my $dummy = <FILE>;
+		if($dummy =~ m/^\#/){
+			next;
+		}
+		push @courses, $dummy;
+	}
+	close FILE;
+	chomp(@courses);
+	print @courses;
 } 
 else {
 		open FILE, '>courses.txt';
@@ -51,5 +63,4 @@ else {
 	    die "No course list, please fill in the course list\nin your /home/Academics directory under the name courses.txt\n";
 
 }
-
 
