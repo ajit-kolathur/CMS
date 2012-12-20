@@ -51,3 +51,5 @@ else {
 	    die "No course list, please fill in the course list\nin your /home/Academics directory under the name courses.txt\n";
 
 }
+
+
