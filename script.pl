@@ -5,8 +5,10 @@
 # 23:30 19/12/12
 
 use LWP::Simple qw($ua head); # for the ping check
-use File::HomeDir; # for home directory access
 $ua->timeout(0.5); # timeout interval
+use File::HomeDir; # for home directory access
+use WWW::Mechanize;
+my $mech = WWW::Mechanize->new();
 
 #  Checking whether to use the lan site or the public IP
 #  LAN site usage will happen only if there is a computer responding
@@ -22,10 +24,12 @@ my $folder = File::HomeDir->my_home . "/$name";
 #begin IP Check Code
 if(head($local_address)){
 	print "Using the intranet site\n";
+	$mech->get($local_address);
 }
 else {
 	if(head($remote_address)){
 		print "Using the internet site\n";
+		$mech->get($remote_address);
 	}
 	else{
 		die "no internet access, no use\n";
@@ -67,4 +71,15 @@ else {
 }
 #end courses check
 
+#  Now that we have reached the website we have to login
+#  to the darn site, so i had to make a bot go press the guest
+#  login button located below the username and password box
+#  its somewhere there. (IF ONLY THE CMS TEAM MADE IT EASIER)
+
+#begin login button bot
+$mech->follow_link( text => 'login');
+$mech->form_id( 'guestlogin' );
+$mech->click_button( number => 1);
+print $mech->text();
+#end login button bot
 
