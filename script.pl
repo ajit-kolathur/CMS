@@ -59,6 +59,7 @@ if ( -e $fileSpec ) {
 		if($dummy =~ m/^\#/){
 			next;
 		}
+		next if $dummy =~ m/^\#/;
 		push @courses, $dummy;
 	}
 	close FILE;
