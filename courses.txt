@@ -1,3 +1,4 @@
 AAOC C222
 BITS C313
-# well this sucks
+# fill in the course codes here seperated by enter,
+# all hash lines are treated as comments
