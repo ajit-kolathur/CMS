@@ -54,8 +54,8 @@ my $fileSpec ="courses.txt";
 if ( -e $fileSpec ) {
     print "Reading from the file\n";
 	open FILE, 'courses.txt';
-	for (my $i = 0 ; $i < 8 ; $i++) {
-		my $dummy = <FILE>;
+	while(<FILE>) {
+		my $dummy = $_;
 		if($dummy =~ m/^\#/){
 			next;
 		}
@@ -91,29 +91,33 @@ $mech->click_button( number => 1);
 #  if the folder doesnt exist for a course we create it and then download all the relevant files for that course
 
 #start downloader
-print $course;
-$mech->follow_link( text_regex => qr/$courses[0]/i );
-$mech->follow_link( text_regex => qr/LS1/ );
-#my $content = $mech->content();
-@c = $mech->find_all_links();
-#print $mech->content();
-foreach $c (@c){
-	my $attr = $c->attrs();
-	if($attr->{onclick} eq "")
-	{
+foreach $courses (@courses){
+	if($courses eq ""){
 		next;
 	}
-	#print $attr->{onclick};
-	my $w = substr $attr->{onclick}, 13,-17;
-	$w =~ s/http:\/\/172\.16\.100\.125\//$address/;
-	print $w;
-	my $dwn = $mech->clone();
-	$dwn->get($w);
-	my $fname = substr $attr->{onclick}, 59, -33;
-	my @values = split('/', $fname);
-	$fname = uri_unescape($values[-1]);
-	print "  ";
-	print $fname;
-	$dwn->save_content($fname);
-	print "\n";
+	chdir "$courses" or (mkdir $courses, oct($permissions) and chdir $courses);
+	my $mech1 = $mech->clone();
+	$mech1->follow_link( text_regex => qr/$courses/i );
+	$mech1->follow_link( text_regex => qr/LS1/ );
+	@c = $mech1->find_all_links();
+	foreach $c (@c){
+		my $attr = $c->attrs();
+		if($attr->{onclick} eq "")
+		{
+			next;
+		}
+		my $w = substr $attr->{onclick}, 13,-17;
+		$w =~ s/http:\/\/172\.16\.100\.125\//$address/;
+		my $dwn = $mech1->clone();
+		my $fname = substr $attr->{onclick}, 59, -33;
+		my @values = split('/', $fname);
+		$fname = uri_unescape($values[-1]);
+		my @all_files = glob '*';
+		next if $fname ~~ @all_files;
+		$dwn->get($w);
+		$dwn->save_content($fname);
+		print $fname;
+		print "\n";
+	}
+	chdir "$folder";
 }
