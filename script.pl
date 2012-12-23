@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Vishwajit Kolathur
-# CMS - Sync V 0.1
+# CMS - Sync V 0.5
 # 23:30 19/12/12
 
 use URI::Escape;
