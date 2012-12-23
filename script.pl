@@ -4,32 +4,35 @@
 # CMS - Sync V 0.1
 # 23:30 19/12/12
 
+use URI::Escape;
 use LWP::Simple qw($ua head); # for the ping check
 $ua->timeout(0.5); # timeout interval
 use File::HomeDir; # for home directory access
 use WWW::Mechanize;
-my $mech = WWW::Mechanize->new();
+$mech = WWW::Mechanize->new();
 
 #  Checking whether to use the lan site or the public IP
 #  LAN site usage will happen only if there is a computer responding
 #  on the IP 172.16.100.125 else it will check for the connectivity 
 #  to the Public IP 111.93.5.216 
 
-my $local_address = "http://172.16.100.125/";
-my $remote_address = "http://111.93.5.216/";
-my $name = "Academics"; #Folder name under which to store
-my $permissions = '0755'; #folder permissions
-my $folder = File::HomeDir->my_home . "/$name";
+$local_address = "http://172.16.100.125/";
+$remote_address = "http://111.93.5.216/";
+$name = "Academics"; #Folder name under which to store
+$permissions = '0755'; #folder permissions
+$folder = File::HomeDir->my_home . "/$name";
 
 #begin IP Check Code
 if(head($local_address)){
 	print "Using the intranet site\n";
 	$mech->get($local_address);
+	$address = $local_address;
 }
 else {
 	if(head($remote_address)){
 		print "Using the internet site\n";
 		$mech->get($remote_address);
+		$address = $remote_address;
 	}
 	else{
 		die "no internet access, no use\n";
@@ -51,7 +54,6 @@ my $fileSpec ="courses.txt";
 if ( -e $fileSpec ) {
     print "Reading from the file\n";
 	open FILE, 'courses.txt';
-	my @courses;
 	for (my $i = 0 ; $i < 8 ; $i++) {
 		my $dummy = <FILE>;
 		if($dummy =~ m/^\#/){
@@ -61,7 +63,7 @@ if ( -e $fileSpec ) {
 	}
 	close FILE;
 	chomp(@courses);
-	print @courses;
+	#print @courses;
 } 
 else {
 		open FILE, '>courses.txt';
@@ -80,6 +82,38 @@ else {
 $mech->follow_link( text => 'login');
 $mech->form_id( 'guestlogin' );
 $mech->click_button( number => 1);
-print $mech->text();
 #end login button bot
 
+#  Now use the array of courses to scout out courses in CMS
+#  find all courses that are there and itteratively visit
+#  in the visit, scrape all pure file links (what i mean by this is, from the .php?id=XXXXX we extract the actual hard coded url for the file
+#  from the hard coded url, decode the URL to get a file name which we compare with acutal content of the foler, If it exists
+#  if the folder doesnt exist for a course we create it and then download all the relevant files for that course
+
+#start downloader
+print $course;
+$mech->follow_link( text_regex => qr/$courses[0]/i );
+$mech->follow_link( text_regex => qr/LS1/ );
+#my $content = $mech->content();
+@c = $mech->find_all_links();
+#print $mech->content();
+foreach $c (@c){
+	my $attr = $c->attrs();
+	if($attr->{onclick} eq "")
+	{
+		next;
+	}
+	#print $attr->{onclick};
+	my $w = substr $attr->{onclick}, 13,-17;
+	$w =~ s/http:\/\/172\.16\.100\.125\//$address/;
+	print $w;
+	my $dwn = $mech->clone();
+	$dwn->get($w);
+	my $fname = substr $attr->{onclick}, 59, -33;
+	my @values = split('/', $fname);
+	$fname = uri_unescape($values[-1]);
+	print "  ";
+	print $fname;
+	$dwn->save_content($fname);
+	print "\n";
+}
