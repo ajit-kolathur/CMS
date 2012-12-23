@@ -9,7 +9,7 @@ use LWP::Simple qw($ua head); # for the ping check
 $ua->timeout(0.5); # timeout interval
 use File::HomeDir; # for home directory access
 use WWW::Mechanize;
-$mech = WWW::Mechanize->new();
+$mech = WWW::Mechanize->new( onerror=> undef);
 
 #  Checking whether to use the lan site or the public IP
 #  LAN site usage will happen only if there is a computer responding
@@ -95,11 +95,13 @@ foreach $courses (@courses){
 	if($courses eq ""){
 		next;
 	}
-	chdir "$courses" or (mkdir $courses, oct($permissions) and chdir $courses);
 	my $mech1 = $mech->clone();
-	$mech1->follow_link( text_regex => qr/$courses/i );
+	print "Course Code ERROR, please check the course code $courses it doesnt exist\n" and next if $mech1->follow_link( text_regex => qr/$courses/i ) eq undef;
 	$mech1->follow_link( text_regex => qr/LS1/ );
 	@c = $mech1->find_all_links();
+	chdir "$courses" or (mkdir $courses, oct($permissions) and chdir $courses);
+	print "from course $courses i have downloaded:\n"; 
+	my $count = 0;
 	foreach $c (@c){
 		my $attr = $c->attrs();
 		if($attr->{onclick} eq "")
@@ -118,6 +120,9 @@ foreach $courses (@courses){
 		$dwn->save_content($fname);
 		print $fname;
 		print "\n";
+		$count = $count + 1;
 	}
+	print "--- Downloaded $count file(s) for $courses\n";
 	chdir "$folder";
 }
+#end downloader
