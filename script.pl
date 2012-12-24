@@ -92,7 +92,7 @@ $mech->click_button( number => 1);
 foreach $courses (@courses){
 	next if $courses eq "";
 	my $mech1 = $mech->clone();
-	print "Course Code ERROR, course code $courses it doesnt exist\n" and next if $mech1->follow_link( text_regex => qr/$courses/i ) eq undef;
+	print "Course Code ERROR, course code $courses doesnt exist\n" and next if $mech1->follow_link( text_regex => qr/$courses/i ) eq undef;
 	$mech1->follow_link( text_regex => qr/LS1/ );
 	@c = $mech1->find_all_links();
 	chdir "$courses" or (mkdir $courses, oct($permissions) and chdir $courses);
@@ -102,7 +102,8 @@ foreach $courses (@courses){
 		my $attr = $c->attrs();
 		next if $attr->{onclick} eq "";
 		my $w = substr $attr->{onclick}, 13,-17;
-		$w =~ s/http:\/\/172\.16\.100\.125\//$address/;
+		$w =~ s/http:\/\/111\.93\.5\.216\//$address/ if ($w =~ m/^(http:\/\/111\.93\.5\.216\/)/);
+		$w =~ s/http:\/\/172\.16\.100\.125\//$address/ if ($w =~ m/^(http:\/\/172\.16\.100\.125\/)/);
 		my $dwn = $mech1->clone();
 		my $fname = substr $attr->{onclick}, 59, -33;
 		my @values = split('/', $fname);
