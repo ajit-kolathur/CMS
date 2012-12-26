@@ -11,6 +11,7 @@ $ua->timeout(0.5); # timeout interval
 use File::HomeDir; # for home directory access
 use WWW::Mechanize;
 use Switch;
+
 #Global Variables
 $mech = WWW::Mechanize->new( onerror=> undef);
 $local_address = "http://172.16.100.125/";
@@ -20,7 +21,11 @@ $permissions = '0755'; #folder permissions
 $folder = File::HomeDir->my_home . "/$name";
 $fileSpec =".courses.txt";
 
-#command line argument handling
+#  Command line argument supporting menu
+#  this calls the respective subroutine
+#  also offers help and version check
+
+#start command line argument handling
 if($#ARGV == -1){
 	print "No command line arguments found, use --help to find out commands\n";
 	exit;
@@ -40,6 +45,12 @@ switch ($option){
 }
 exit;
 #end command line argument handling
+
+#  Removing courses from the course list
+#  supports multiple removal, and works
+#  checks for multiple occurances also
+
+#start course removal
 sub remove{
 	my @rem = @_;
 	my $count = $#rem;
@@ -75,6 +86,11 @@ sub remove{
 	}
 	&courses;
 }
+#end course removal
+
+#  Displays contents of courselist
+
+#start course display
 sub courses{
 	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir $name);
 	if ( -e $fileSpec ) {
@@ -90,34 +106,61 @@ sub courses{
 	}
 
 }
+#end course display
+
+#  A log file display mechanism to
+#  see whats going on, and also
+#  helps in bug checks
+
+#start log display
 sub log{
 	my $logSpec;
 	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir $name);
 	if ( -e $logSpec ) {
 	    print "Reading the file\n";
-		open FILE, $logSpec;
+		open LOG, $logSpec;
 		print "The following are the contents of your Log File:\n";
-		while(<FILE>){
+		while(<LOG>){
 			print $_;
 		}
-		close FILE;
+		close LOG;
 	} 
 	else {
 		print "The Log is Empty\n";	
 	}
 
 }
+#end log display
+
+#  Command line update check
+#  NON FUNCTIONAL
+#  Still need to write this
+
+#start update
 sub update{
 	print "I really dont know how i am going to manage this, lets see, not ready yet :-p\n";
 }
+#end update
 
+#  Version Display subroutine
+#start version
 sub version{
 	print "You are currently running a version: $version\n";
 }
+#end version
 
+#  Help Subroutine, Just prints help text
+
+#start help
 sub help{
 	print("The following are the commands:\nadd\t\tthis allows you to add multiple courses, syntax: <add discipline course_code discipline course_code....>\nsync\t\tthis allows you to sync between the CMS and ur directory\n--version\tthis will allow you to find the CourseSync version number\nupdate\t\tthis will allow you to update the CourseSync application\nlog\t\tthis will allow you to look at the action logs, what was added, what was removed etc\ncourses\t\tthis prints all the courses you have in your course list\nremove\t\tthis allows you to remove courses that you dont want, but this will not remove the past downloaded content\n");
 }
+#end help
+
+#  Core Sync subroutine
+#  the main syncing part of the program
+
+#start sync
 sub sync{
 	#  Checking whether to use the lan site or the public IP
 	#  LAN site usage will happen only if there is a computer responding
@@ -222,7 +265,11 @@ sub sync{
 	}
 	#end downloader
 }
+#end sync
 
+#  Functions to add courses to the course list
+
+#start course add
 sub add{
 	my @args = @_;
 	my $count = $#args;
@@ -252,3 +299,4 @@ sub add{
 	
 	}
 }
+#end course add
