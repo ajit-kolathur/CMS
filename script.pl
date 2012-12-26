@@ -28,14 +28,20 @@ my $option = $ARGV[0];
 shift @ARGV;
 switch ($option){
 	case "add"	{ &add(@ARGV);}
+	case "sync"	{&syc;}
+	case "--help" {&help;}
+	case "--version"	{&ver;}
 	case "update"	{&update;}
+	case "log"	{&log;}
+	case "courses"	{&courses;}
+	case "remove"	{&remove;}
 	else { exit;}
 }
 exit;
 #end command line argument handling
 
 
-sub update{
+sub sync{
 	#  Checking whether to use the lan site or the public IP
 	#  LAN site usage will happen only if there is a computer responding
 	#  on the IP 172.16.100.125 else it will check for the connectivity 
