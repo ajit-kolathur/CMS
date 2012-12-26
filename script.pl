@@ -34,7 +34,7 @@ my $option = $ARGV[0];
 shift @ARGV;
 switch ($option){
 	case "add"	{ &add(@ARGV);}
-	case "sync"	{&syc;}
+	case "sync"	{&sync;}
 	case "--help" {&help;}
 	case "--version"	{&version;}
 	case "update"	{&update;}
