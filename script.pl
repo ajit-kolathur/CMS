@@ -153,7 +153,7 @@ sub version{
 
 #start help
 sub help{
-	print("The following are the commands:\nadd\t\tthis allows you to add multiple courses, syntax: <add discipline course_code discipline course_code....>\nsync\t\tthis allows you to sync between the CMS and ur directory\n--version\tthis will allow you to find the CourseSync version number\nupdate\t\tthis will allow you to update the CourseSync application\nlog\t\tthis will allow you to look at the action logs, what was added, what was removed etc\ncourses\t\tthis prints all the courses you have in your course list\nremove\t\tthis allows you to remove courses that you dont want, but this will not remove the past downloaded content\n");
+	print("\nThe following are the commands:\nadd\t\tthis allows you to add multiple courses, syntax: <add discipline course_code discipline course_code....>\nsync\t\tthis allows you to sync between the CMS and ur directory\n--version\tthis will allow you to find the CourseSync version number\nupdate\t\tthis will allow you to update the CourseSync application\nlog\t\tthis will allow you to look at the action logs, what was added, what was removed etc\ncourses\t\tthis prints all the courses you have in your course list\nremove\t\tthis allows you to remove courses that you dont want, but this will not remove the past downloaded content\n\n");
 }
 #end help
 
