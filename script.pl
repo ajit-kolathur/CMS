@@ -196,7 +196,7 @@ sub sync{
 	#begin courses check
 	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir $name);
 	if ( -e $fileSpec ) {
-	    print "Reading from the file\n";
+	    print "Reading from course list\n";
 		open FILE, $fileSpec;
 		while(<FILE>) {
 			my $dummy = $_;
