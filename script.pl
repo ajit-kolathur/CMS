@@ -1,9 +1,10 @@
 #!/usr/bin/perl
 
 # Vishwajit Kolathur
-# CMS - Sync V 0.5
+# CMS - Sync V 0.75
 # 23:30 19/12/12
 
+$version = "0.75 beta";
 use URI::Escape;
 use LWP::Simple qw($ua head); # for the ping check
 $ua->timeout(0.5); # timeout interval
@@ -30,17 +31,93 @@ switch ($option){
 	case "add"	{ &add(@ARGV);}
 	case "sync"	{&syc;}
 	case "--help" {&help;}
-	case "--version"	{&ver;}
+	case "--version"	{&version;}
 	case "update"	{&update;}
 	case "log"	{&log;}
 	case "courses"	{&courses;}
-	case "remove"	{&remove;}
+	case "remove"	{&remove(@ARGV);}
 	else { exit;}
 }
 exit;
 #end command line argument handling
+sub remove{
+	my @rem = @_;
+	my $count = $#rem;
+	my @courses;
+	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir $name);
+	if ( -e $fileSpec ) {
+		open FILE, $fileSpec;
+		while(<FILE>){
+			push @courses, $_;
+		}
+		close FILE;
+		chomp(@courses);
+		open FILE, '>'.$fileSpec;
+		print "Cant remove any courses, there arent any in the first place\n" if($#courses == 0);
+		if($#rem %2 eq 0){
+			print "cant remove, one or more of the courses dont exhibit proper syntax, check @rem\n";
+			return;
+		}
+		for(my $i=0; $i <= $count; $i = $i + 2){
+			push @del, "$rem[$i] $rem[$i+1]";
+		}
+		my %delh;
+		@delh{@del} = ();
+		@courses = grep ! exists $delh{$_}, @courses;
+		foreach $courses (@courses){
+			print FILE "$courses\n";
+			print "$courses\n";
+		}
+		close FILE;
+	} 
+	else {
+			print "No Course List yet, create one using add, use --help for syntax\n";
+	}
+	&courses;
+}
+sub courses{
+	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir $name);
+	if ( -e $fileSpec ) {
+		open FILE, $fileSpec;
+		print "The following are the contents of your course list:\n";
+		while(<FILE>){
+			print $_;
+		}
+		close FILE;
+	} 
+	else {
+			print "No Course List yet, create one using add, use --help for syntax\n";
+	}
 
+}
+sub log{
+	my $logSpec;
+	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir $name);
+	if ( -e $logSpec ) {
+	    print "Reading the file\n";
+		open FILE, $logSpec;
+		print "The following are the contents of your Log File:\n";
+		while(<FILE>){
+			print $_;
+		}
+		close FILE;
+	} 
+	else {
+		print "The Log is Empty\n";	
+	}
 
+}
+sub update{
+	print "I really dont know how i am going to manage this, lets see, not ready yet :-p\n";
+}
+
+sub version{
+	print "You are currently running a version: $version\n";
+}
+
+sub help{
+	print("The following are the commands:\nadd\t\tthis allows you to add multiple courses, syntax: <add discipline course_code discipline course_code....>\nsync\t\tthis allows you to sync between the CMS and ur directory\n--version\tthis will allow you to find the CourseSync version number\nupdate\t\tthis will allow you to update the CourseSync application\nlog\t\tthis will allow you to look at the action logs, what was added, what was removed etc\ncourses\t\tthis prints all the courses you have in your course list\nremove\t\tthis allows you to remove courses that you dont want, but this will not remove the past downloaded content\n");
+}
 sub sync{
 	#  Checking whether to use the lan site or the public IP
 	#  LAN site usage will happen only if there is a computer responding
