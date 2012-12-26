@@ -9,7 +9,7 @@ use LWP::Simple qw($ua head); # for the ping check
 $ua->timeout(0.5); # timeout interval
 use File::HomeDir; # for home directory access
 use WWW::Mechanize;
-
+use Switch;
 #Global Variables
 $mech = WWW::Mechanize->new( onerror=> undef);
 $local_address = "http://172.16.100.125/";
@@ -18,6 +18,19 @@ $name = "Academics"; #Folder name under which to store
 $permissions = '0755'; #folder permissions
 $folder = File::HomeDir->my_home . "/$name";
 $fileSpec =".courses.txt";
+
+#command line argument handling
+print "No command line arguments found, proceeding with update\n" and &update and exit if($#ARGV == -1);
+my $option = $ARGV[0];
+shift @ARGV;
+switch ($option){
+	case "add"	{ &add(@ARGV);}
+	case "update"	{&update;}
+	else {&update;}
+}
+exit;
+#end command line argument handling
+
 
 sub update{
 	#  Checking whether to use the lan site or the public IP
@@ -66,10 +79,10 @@ sub update{
 		#print @courses;
 	} 
 	else {
-			open FILE, '>courses.txt';
+			open FILE, '>'.$fileSpec;
 			close FILE;
-		    die "No course list, please fill in the course list\nby executing the add command";
-	
+		    print "No course list, please fill in the course list\nby executing the add command\n";
+			exit;
 	}
 	#end courses check
 	
@@ -125,17 +138,24 @@ sub update{
 }
 
 sub add{
-	my $number = $#_;
+	my @args = $_[0];
+	my $count = $#args;
 	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir "Academics");
 	if ( -e $fileSpec ) {
 	    print "Writing to the file\n";
 		open FILE, '>>'.$fileSpec;
-		
+		die "The enetered course set is incomplete, enter the \"discipline course_code\" for each course\nverify @args" if ($count%2 ne 0);
+		for(my $i=0; $i < $count; $i = $i + 2){
+			print FILE "$args[i] $args[i+1]\n";
+		}
 		close FILE;
 	} 
 	else {
 			open FILE, '>'.$fileSpec;
-			
+			die "The enetered course set is incomplete, enter the \"discipline course_code\" for each course\nverify @args" if ($count%2 ne 0);
+			for(my $i=0; $i < $count; $i = $i + 2){
+				print FILE "$args[i] $args[i+1]\n";
+			}
 			close FILE;
 	
 	}
