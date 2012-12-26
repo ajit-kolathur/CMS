@@ -20,13 +20,16 @@ $folder = File::HomeDir->my_home . "/$name";
 $fileSpec =".courses.txt";
 
 #command line argument handling
-print "No command line arguments found, proceeding with update\n" and &update and exit if($#ARGV == -1);
+if($#ARGV == -1){
+	print "No command line arguments found, use --help to find out commands\n";
+	exit;
+}
 my $option = $ARGV[0];
 shift @ARGV;
 switch ($option){
 	case "add"	{ &add(@ARGV);}
 	case "update"	{&update;}
-	else {&update;}
+	else { exit;}
 }
 exit;
 #end command line argument handling
@@ -65,7 +68,7 @@ sub update{
 	#  and die asking user to fill it in
 	
 	#begin courses check
-	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir "Academics");
+	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir $name);
 	if ( -e $fileSpec ) {
 	    print "Reading from the file\n";
 		open FILE, $fileSpec;
@@ -138,15 +141,21 @@ sub update{
 }
 
 sub add{
-	my @args = $_[0];
+	my @args = @_;
 	my $count = $#args;
-	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir "Academics");
+	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir $name);
 	if ( -e $fileSpec ) {
 	    print "Writing to the file\n";
 		open FILE, '>>'.$fileSpec;
-		die "The enetered course set is incomplete, enter the \"discipline course_code\" for each course\nverify @args" if ($count%2 ne 0);
-		for(my $i=0; $i < $count; $i = $i + 2){
-			print FILE "$args[i] $args[i+1]\n";
+		print "The enetered course set is incomplete, enter the \"discipline course_code\" for each course\nverify @args\n" and exit if ($count%2 eq 0);
+		for(my $i=0; $i <= $count; $i = $i + 2){
+			print FILE "$args[$i] $args[$i+1]\n";
+		}
+		close FILE;
+		open FILE, $fileSpec;
+		print "The following are the contents of your course list\n";
+		while(<FILE>){
+			print $_;
 		}
 		close FILE;
 	} 
