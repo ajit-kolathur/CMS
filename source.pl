@@ -52,6 +52,7 @@ sub remove{
 	my @rem = @_;
 	my $count = $#rem;
 	my @courses;
+	die "You didnt specify which course to remove\n" if($count == 0); 
 	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir $name);
 	if ( -e $fileSpec ) {
 		open FILE, $fileSpec;
