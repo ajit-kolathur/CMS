@@ -1,5 +1,5 @@
 #!/bin/bash
-DIR = $(pwd)
+DIR=$(pwd)
 get_cpanm(){
     if [ \! -f /usr/local/bin/cpanm ]; then
 		cd $TMP_DIR && curl --insecure -L http://cpanmin.us | perl - App::cpanminus
@@ -22,5 +22,5 @@ cpanm --sudo LWP::Simple URI::Escape File::HomeDir WWW::Mechanize
 cd $DIR
 chmod +x script.pl
 cp -p script.pl /usr/local/bin/CourseSync
-install -g 0 -o 0 -m 0644 .CourseSync.1 /usr/local/man/man1/CourseSync.1
-gzip /usr/local/man/man1/CourseSync.1
+install -g 0 -o 0 -m 0644 .CourseSync.1 /usr/local/share/man/man1/CourseSync.1
+gzip /usr/local/share/man/man1/CourseSync.1
