@@ -1,0 +1,73 @@
+.\" Manpage for CourseSync.
+.\" Contact aj.ajit@gmail.com to correct errors or typos.
+.TH CourseSync 1 "27 Dec 2012" "0.75b" "CourseSync man page"
+.SH NAME
+.BR CourseSync " \- Auto-Downloading Course Manager for BITS Pilani Hyderabad Campus"
+.SH SYNOPSIS
+.TP 5 
+.RB "CourseSync " "add [Course_Code_1] [Course_Code_2] ...."
+.TP 
+.RB "CourseSync " "remove [Course_Code_1] [Course_Code_2] ...."
+.TP 
+.RB "CourseSync " "sync"
+.TP 
+.RB "CourseSync " "courses"
+.TP 
+.RB "CourseSync " "--help"
+.TP 
+.RB "CourseSync " "--version"
+.SH DESCRIPTION
+CourseSync is a tool built for students (predominently linux fanboys :-p) to automatically manage course content management,
+it downloads and synchronizes the lecture slides and other uploads by profs into a ~/Academics/ (By Default, path can changed by editing $folder inside the script), it is especially help full because it saves you the time of manually logging in and downloading each lecuture. But the difficulty in this is that currently it downlads the LS1, i will later incorporate the ability to give course nicknames (for course code: AAOC C222, one may want to call it Opti) and also lecture section selection and tututorial content.
+.SH NETWORK SUPPORT
+The Program supports both LAN Usage and INTERNET use,
+.IP \(bu 2
+LAN:
+.URL
+http://172.16.100.125
+.IP \(bu 2
+INTERNET: http://111.93.5.216
+.SH OPTIONS
+.HP 
+The Following are the supported options as of 
+.B "v0.75 Beta"
+:
+.IP "add" 14  
+the add function takes an input of your course code and puts it into a DB file i call the course list,
+.br
+.IB Syntax: "  CourseSync add AAOC C222 CS C361 BITS C999"
+.IP "remove"
+the remove funtion takes input of courses that you want to remove and removes all copies even if multiple, the course is only removed from your sync list and none of the previously downloaded content is deleted,
+.br
+.IB Syntax: "  CourseSync remove BITS C999 CS C361"
+.IP "sync"
+the sync function takes no inputs, it merely reads the course list and goes through the CMS,	
+once it reaches the CMS, it searches for the courses in your course list and downloads all the new or previously not downloaded lectures (Synchronizing one way). v0.75 beta only supports LS1, i have hardcoded it. Will fix this soon.
+.br			
+.IB Syntax: "  CourseSync sync"
+.IP "courses"
+this display's the content of your course list
+.br
+.IB Syntax: "  CourseSync sync"
+.IP "--help" NNN
+shows you the meaning of each command line argument in short
+.br
+.IB Syntax: "  CourseSync --help"
+.IP "--version"
+shows you the version information
+.br
+.IB Syntax: "  CourseSync --version"
+.IP "log"
+still under development, i am stil wondering whethter or not to put this in.
+.br
+.IB Syntax: "  CourseSync log"
+.IP "update"
+i am still writing this, give me some time, i took a break during christmas.
+.br
+.IB Syntax: "  CourseSync update"
+.SH SEE ALSO
+perl(1), perlcc(1), cpanm(1), pp(1), lwp(3pm), WWW::Mechanize(3pm), URI::Escape(3pm), File::HomeDir(3pm).
+.SH BUGS
+Uh, it supports only LS1, the folder under which course content is stored cannot be changed, lectures should not be renamed so as to avoid redownload and in order to edit the location to which it downloads all this content you need to edit the code.
+.SH AUTHOR
+Vishwajit Kolathur (aj.ajit@gmail.com)

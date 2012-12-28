@@ -10,7 +10,6 @@ use LWP::Simple qw($ua head); # for the ping check
 $ua->timeout(0.5); # timeout interval
 use File::HomeDir; # for home directory access
 use WWW::Mechanize;
-use Switch;
 
 #Global Variables
 $mech = WWW::Mechanize->new( onerror=> undef);
@@ -32,17 +31,15 @@ if($#ARGV == -1){
 }
 my $option = $ARGV[0];
 shift @ARGV;
-switch ($option){
-	case "add"	{ &add(@ARGV);}
-	case "sync"	{&sync;}
-	case "--help" {&help;}
-	case "--version"	{&version;}
-	case "update"	{&update;}
-	case "log"	{&log;}
-	case "courses"	{&courses;}
-	case "remove"	{&remove(@ARGV);}
-	else { exit;}
-}
+if ($option eq "add")	{ &add(@ARGV);}
+elsif ($option eq "sync")	{&sync;}
+elsif ($option eq "--help") {&help;}
+elsif ($option eq "--version")	{&version;}
+elsif ($option eq "update")	{&update;}
+elsif ($option eq "log")	{&log;}
+elsif ($option eq "courses")	{&courses;}
+elsif ($option eq "remove")	{&remove(@ARGV);}
+else { exit;}
 exit;
 #end command line argument handling
 
@@ -77,7 +74,6 @@ sub remove{
 		@courses = grep ! exists $delh{$_}, @courses;
 		foreach $courses (@courses){
 			print FILE "$courses\n";
-			print "$courses\n";
 		}
 		close FILE;
 	} 
@@ -291,7 +287,7 @@ sub add{
 	} 
 	else {
 			open FILE, '>'.$fileSpec;
-			die "The enetered course set is incomplete, enter the \"discipline course_code\" for each course\nverify @args" if ($count%2 ne 0);
+			die "The enetered course set is incomplete, enter the \"discipline course_code\" for each course\nverify @args" if ($count%2 eq 0);
 			for(my $i=0; $i < $count; $i = $i + 2){
 				print FILE "$args[i] $args[i+1]\n";
 			}
