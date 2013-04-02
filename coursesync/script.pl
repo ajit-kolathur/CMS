@@ -26,7 +26,7 @@ $fileSpec =".courses.txt";
 
 #start command line argument handling
 if($#ARGV == -1){
-	print "No command line arguments found, use --help to find out commands\n";
+        &sync;	
 	exit;
 }
 my $option = $ARGV[0];
@@ -39,7 +39,7 @@ elsif ($option eq "update")	{&update;}
 elsif ($option eq "log")	{&log;}
 elsif ($option eq "courses")	{&courses;}
 elsif ($option eq "remove")	{&remove(@ARGV);}
-else { exit;}
+else { print "Invalid option: $option\nSee --help for a list of commands."; exit;}
 exit;
 #end command line argument handling
 
@@ -274,7 +274,7 @@ sub add{
 	if ( -e $fileSpec ) {
 	    print "Writing to the file\n";
 		open FILE, '>>'.$fileSpec;
-		print "The enetered course set is incomplete, enter the \"discipline course_code\" for each course\nverify @args\n" and exit if ($count%2 eq 0);
+		print "The entered course set is incomplete, enter the \"discipline course_code\" for each course\nverify @args\n" and exit if ($count%2 eq 0);
 		for(my $i=0; $i <= $count; $i = $i + 2){
 			print FILE "$args[$i] $args[$i+1]\n";
 		}
@@ -288,7 +288,7 @@ sub add{
 	} 
 	else {
 			open FILE, '>'.$fileSpec;
-			die "The enetered course set is incomplete, enter the \"discipline course_code\" for each course\nverify @args" if ($count%2 eq 0);
+			die "The entered course set is incomplete, enter the \"discipline course_code\" for each course\nverify @args" if ($count%2 eq 0);
 			for(my $i=0; $i < $count; $i = $i + 2){
 				print FILE "$args[i] $args[i+1]\n";
 			}
