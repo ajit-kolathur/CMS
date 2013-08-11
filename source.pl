@@ -39,7 +39,7 @@ elsif ($option eq "update")	{&update;}
 elsif ($option eq "log")	{&log;}
 elsif ($option eq "courses")	{&courses;}
 elsif ($option eq "remove")	{&remove(@ARGV);}
-else { exit;}
+else { &sync;}
 exit;
 #end command line argument handling
 
