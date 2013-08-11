@@ -218,7 +218,7 @@ sub sync{
 	#  its somewhere there. (IF ONLY THE CMS TEAM MADE IT EASIER)
 	
 	#begin login button bot
-	$mech->follow_link( text => 'login');
+	$mech->follow_link( text => 'Login');
 	$mech->form_id( 'guestlogin' );
 	$mech->click_button( number => 1);
 	#end login button bot
