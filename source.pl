@@ -26,7 +26,7 @@ $fileSpec =".courses.txt";
 
 #start command line argument handling
 if($#ARGV == -1){
-	print "No command line arguments found, use --help to find out commands\n";
+	&sync;
 	exit;
 }
 my $option = $ARGV[0];
@@ -39,7 +39,7 @@ elsif ($option eq "update")	{&update;}
 elsif ($option eq "log")	{&log;}
 elsif ($option eq "courses")	{&courses;}
 elsif ($option eq "remove")	{&remove(@ARGV);}
-else { &sync;}
+else { &help;}
 exit;
 #end command line argument handling
 
