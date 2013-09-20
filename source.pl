@@ -10,7 +10,6 @@ use LWP::Simple qw($ua head); # for the ping check
 $ua->timeout(0.5); # timeout interval
 use File::HomeDir; # for home directory access
 use WWW::Mechanize;
-
 #Global Variables
 $mech = WWW::Mechanize->new( onerror=> undef);
 $local_address = "http://172.16.100.125/";
@@ -52,7 +51,7 @@ sub remove{
 	my @rem = @_;
 	my $count = $#rem;
 	my @courses;
-	die "You didnt specify which course to remove\n" if($count == 0); 
+	die "You didnt specify which course to remove\n" if($count == -1); 
 	chdir "$folder" or (chdir File::HomeDir->my_home and mkdir $name, oct($permissions) and chdir $name);
 	if ( -e $fileSpec ) {
 		open FILE, $fileSpec;
@@ -218,9 +217,12 @@ sub sync{
 	#  its somewhere there. (IF ONLY THE CMS TEAM MADE IT EASIER)
 	
 	#begin login button bot
-	$mech->follow_link( text => 'Login');
-	$mech->form_id( 'guestlogin' );
-	$mech->click_button( number => 1);
+    $mech->get( $address . '/bits-cms/login/index.php' );
+    #$mech->follow_link(text=>'CMS Login');
+    $mech->form_id( 'login' );
+    $mech->field('username','guest');
+    $mech->field('password','guest');
+    $mech->submit();
 	#end login button bot
 	
 	#  Now use the array of courses to scout out courses in CMS
@@ -241,20 +243,24 @@ sub sync{
 		my $count = 0;
 		foreach $c (@c){
 			my $attr = $c->attrs();
-			next if $attr->{onclick} eq "";
-			my $w = substr $attr->{onclick}, 13,-17;
+            next if index($attr->{href}, "resource/view.php?id=") eq -1;
+            $w = $attr->{href};
+            my $dwn = $mech1->clone();
+            $dwn->max_redirect(0);
+            $dwn->get($w);
+            my $resp = $dwn->response();
+            $w = $resp->header('location');
+			$w = substr $w, 0,-16;
 			if ($w =~ m/^(http:\/\/111\.93\.5\.216\/)/) {$w =~ s/http:\/\/111\.93\.5\.216\//$address/;} 
 			else {$w =~ s/http:\/\/172\.16\.100\.125\//$address/;}
-			my $dwn = $mech1->clone();
-			my $fname = substr $attr->{onclick}, 59, -33;
-			my @values = split('/', $fname);
-			$fname = uri_unescape($values[-1]);
+            $dwn->max_redirect(7);
+			my @values = split('/', $w);
+			my $fname = uri_unescape($values[-1]);
 			my @all_files = glob '*';
 			next if $fname ~~ @all_files;
 			$dwn->get($w);
 			$dwn->save_content($fname);
-			print $fname;
-			print "\n";
+			print $fname."\n";
 			$count = $count + 1;
 		}
 		print "--- Downloaded $count file(s) for $courses\n";
